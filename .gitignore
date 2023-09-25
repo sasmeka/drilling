@@ -1,0 +1,6 @@
+# /node_modules/* and /bower_components/* ignored by default
+/node_modules
+
+
+tickitz_backend/*
+!tickitz_backend/app.js
