@@ -2,9 +2,10 @@
 const express = require('express')
 const route = express.Router()
 // import controllers
-const control = require('../controllers/user')
+const control = require('../controllers/transaction')
 
 route.get('/', control.getAllData)
+route.post('/', control.addData)
 
 //export
 module.exports = route
