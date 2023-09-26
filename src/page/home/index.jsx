@@ -100,7 +100,7 @@ function LandingPage() {
                             PRODUCTS ? (
                                 PRODUCTS.map((v) => {
                                     return (
-                                        <div className="hover:cursor-pointer" onClick={() => {
+                                        <div key={v.id} className="hover:cursor-pointer" onClick={() => {
                                             let count = 0
                                             product.map((val) => {
                                                 if (val.id == v.id) {
@@ -118,7 +118,7 @@ function LandingPage() {
                                                 settotalpay(totalpay + v.price)
                                             }
                                         }}>
-                                            <div key={v.id} className='border border-gray-500 rounded-md p-4 max-h-fit w-28 text-center flex flex-col'>
+                                            <div className='border border-gray-500 rounded-md p-4 max-h-fit w-28 text-center flex flex-col'>
                                                 <div className="h-[80px] w-[80px]">
                                                     <img src={v.picture} alt='' className='h-full w-full object-cover rounded-md border' />
                                                 </div>
@@ -152,8 +152,8 @@ function LandingPage() {
                             product.length != 0 ? (
                                 product.map((v, i) => {
                                     return (
-                                        <div>
-                                            <div key={v.id} className='border border-gray-500 rounded-md p-2 h-26 text-center flex justify-between items-center'>
+                                        <div key={v.id}>
+                                            <div className='border border-gray-500 rounded-md p-2 h-26 text-center flex justify-between items-center'>
                                                 <div className="flex gap-3">
                                                     <div className="h-16 w-16">
                                                         <img src={v.picture} alt='' className='h-full w-full object-cover rounded-md border' />
