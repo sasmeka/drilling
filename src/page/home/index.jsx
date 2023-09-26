@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useApi from '../../helper/useApi';
 import Select from 'react-select';
+import { Link, useNavigate } from 'react-router-dom'
 
 
 function LandingPage() {
@@ -90,12 +91,27 @@ function LandingPage() {
         users()
     }, [])
 
-    return (
-        <div className="h-screen">
-            <div className='flex flex-col-reverse md:grid md:grid-cols-6 p-5 gap-y-5 md:gap-x-5'>
+    const [menu, setmenu] = useState(false)
 
-                <div className='product md:grid md:col-start-1 md:col-span-4 md'>
-                    <div className='flex flex-wrap justify-between gap-y-10 gap-x-10'>
+    const klik_menu = () => {
+        setmenu(menu ? false : true)
+    }
+
+    const handleResize = () => {
+        if (window.innerWidth > 768) {
+            setmenu(false)
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener("resize", handleResize)
+    })
+
+    return (
+        <div className="">
+            <div className='flex flex-col-reverse md:grid md:grid-cols-6 p-5 gap-y-5 md:gap-x-5'>
+                <div className='md:grid md:col-start-1 md:col-span-4'>
+                    <div className={(menu ? "hidden" : "block") + ' flex flex-wrap justify-between gap-y-10 gap-x-10'}>
                         {
                             PRODUCTS ? (
                                 PRODUCTS.map((v) => {
@@ -135,24 +151,12 @@ function LandingPage() {
                             )
                         }
                     </div>
-                </div>
-                <div className="user md:grid md:col-start-5 md:col-span-6">
-                    <div className='flex flex-col gap-y-3'>
-                        <div>
-                            <Select
-                                className="basic-single"
-                                classNamePrefix="select"
-                                options={optionsuser}
-                                onChange={setid_user}
-                                name="color"
-                                placeholder="Select users"
-                            />
-                        </div>
+                    <div className={(menu ? "block" : "hidden") + " flex flex-col gap-y-3"}>
                         {
                             product.length != 0 ? (
                                 product.map((v, i) => {
                                     return (
-                                        <div key={v.id}>
+                                        <div key={v.id} className="k">
                                             <div className='border border-gray-500 rounded-md p-2 h-26 text-center flex justify-between items-center'>
                                                 <div className="flex gap-3">
                                                     <div className="h-16 w-16">
@@ -191,20 +195,104 @@ function LandingPage() {
                                     )
                                 })
                             ) : (
-                                <div>
+                                <div className="">
                                     <h1>Nothing was ordered.</h1>
                                 </div>
                             )
                         }
-                        <div className="flex justify-between">
+                    </div>
+                    <div className={(menu ? "block" : "hidden") + " flex justify-between mt-10"}>
+                        <p>Total</p>
+                        <p className="font-bold">Rp. {totalpay}</p>
+                    </div>
+                    <div className="mt-10">
+                        {
+                            product.length != 0 ? (
+                                <button onClick={insert} className={(product.length > 0 ? "hover:bg-blue-600" : "") + " block md:hidden h-12 border rounded-md font-bold w-full"}>Checkout</button>
+                            ) : (
+                                <button className={(product.length > 0 ? "hover:bg-blue-600" : "") + " block md:hidden h-12 border rounded-md font-bold w-full"} disabled>Checkout</button>
+                            )
+                        }</div>
+                </div>
+                <div className="md:grid md:col-start-5 md:col-span-6">
+                    <div className='flex justify-between md:justify-normal flex-row md:flex-col gap-y-3'>
+                        <div className="">
+                            <Select
+                                className="basic-single"
+                                classNamePrefix="select"
+                                options={optionsuser}
+                                onChange={setid_user}
+                                name="color"
+                                placeholder="Select users"
+                            />
+                        </div>
+                        <div className="block md:hidden hover:cursor-pointer" onClick={klik_menu}>
+                            {
+                                menu ?
+                                    (
+                                        <i className="fa fa-times" aria-hidden="true"></i>
+                                    ) : (
+                                        <i className="fa fa-bars" aria-hidden="true"></i>
+                                    )
+                            }
+                        </div>
+                        {
+                            product.length != 0 ? (
+                                product.map((v, i) => {
+                                    return (
+                                        <div key={v.id} className="hidden md:block">
+                                            <div className='border border-gray-500 rounded-md p-2 h-26 text-center flex justify-between items-center'>
+                                                <div className="flex gap-3">
+                                                    <div className="h-16 w-16">
+                                                        <img src={v.picture} alt='' className='h-full w-full object-cover rounded-md border' />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-left mb-3">{v.name}</p>
+                                                        <p className="text-sm text-left">Rp. {v.price}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col w-25">
+                                                    <div className="text-right mb-5">
+                                                        <button className="text-center text-sm h-5 w-5 border border-gray-500 rounded hover:bg-red-600" onClick={() => {
+                                                            setproduct([...product.slice(0, i), ...product.slice(i + 1, product.length)])
+                                                            settotalpay(totalpay - (v.count * v.price))
+                                                        }}>X</button>
+                                                    </div>
+                                                    <div>
+                                                        <button onClick={() => {
+                                                            if (v.count != 0) {
+                                                                product[i].count = v.count - 1
+                                                                setproduct([...product])
+                                                                settotalpay(totalpay - v.price)
+                                                            }
+                                                        }} className="h-6 w-6 border border-gray-500 rounded hover:bg-red-600">-</button>
+                                                        <a className="py-1 px-1 border border-gray-500 rounded mx-2 text-sm" >{v.count} </a>
+                                                        <button onClick={() => {
+                                                            product[i].count = v.count + 1
+                                                            setproduct([...product])
+                                                            settotalpay(totalpay + v.price)
+                                                        }} className="h-6 w-6 border border-gray-500 rounded hover:bg-green-600">+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            ) : (
+                                <div className="hidden md:block">
+                                    <h1>Nothing was ordered.</h1>
+                                </div>
+                            )
+                        }
+                        <div className={"hidden md:block md:flex md:justify-between"}>
                             <p>Total</p>
                             <p className="font-bold">Rp. {totalpay}</p>
                         </div>
                         {
                             product.length != 0 ? (
-                                <button onClick={insert} className={(product.length > 0 ? "hover:bg-blue-600" : "") + " h-12 border rounded-md font-bold"}>Checkout</button>
+                                <button onClick={insert} className={(product.length > 0 ? "hover:bg-blue-600" : "") + " hidden md:block h-12 border rounded-md font-bold"}>Checkout</button>
                             ) : (
-                                <button className={(product.length > 0 ? "hover:bg-blue-600" : "") + " h-12 border rounded-md font-bold"} disabled>Checkout</button>
+                                <button className={(product.length > 0 ? "hover:bg-blue-600" : "") + " hidden md:block h-12 border rounded-md font-bold"} disabled>Checkout</button>
                             )
                         }
                     </div>
