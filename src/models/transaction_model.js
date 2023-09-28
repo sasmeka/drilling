@@ -32,7 +32,7 @@ model.addData = ({ id_user, total }) => {
             .then(() => {
                 resolve('transaction data successfully added.')
             }).catch(() => {
-                reject('transaction data failed to add.\'')
+                reject('transaction data failed to add.')
             })
     })
 }
