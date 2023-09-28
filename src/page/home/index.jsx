@@ -13,6 +13,9 @@ function LandingPage() {
     const [id_user, setid_user] = useState({});
     const [totalpay, settotalpay] = useState(0);
 
+    const [message_success, setmessage_success] = useState("");
+    const [message_error, setmessage_error] = useState("");
+
     const optionsuser = [];
     if (user) {
         user.map((v) =>
@@ -80,9 +83,9 @@ function LandingPage() {
                     "total": totalpay
                 }
             })
-            console.log(data)
+            setmessage_success(data.message)
         } catch (e) {
-            console.log(e)
+            setmessage_error(e.response.data.error)
         }
     }
 
@@ -106,6 +109,13 @@ function LandingPage() {
     useEffect(() => {
         window.addEventListener("resize", handleResize)
     })
+
+    useEffect(() => {
+        setTimeout(() => {
+            setmessage_error('')
+            setmessage_success('')
+        }, 15000)
+    }, [message_error, message_success]);
 
     return (
         <div className="">
@@ -205,7 +215,18 @@ function LandingPage() {
                         <p>Total</p>
                         <p className="font-bold">Rp. {totalpay}</p>
                     </div>
+
                     <div className="mt-10">
+                        {
+                            message_error != '' ? (
+                                <div className="block md:hidden text-red-400 text-center tracking-wide mb-3 text-sm">{message_error}</div>
+                            ) : ''
+                        }
+                        {
+                            message_success != '' ? (
+                                <div className="block md:hidden text-green-600 text-center tracking-wide mb-3 text-sm">{message_success}</div>
+                            ) : ''
+                        }
                         {
                             product.length != 0 ? (
                                 <button onClick={insert} className={(product.length > 0 ? "hover:bg-blue-600" : "") + " block md:hidden h-12 border rounded-md font-bold w-full"}>Checkout</button>
@@ -288,6 +309,16 @@ function LandingPage() {
                             <p>Total</p>
                             <p className="font-bold">Rp. {totalpay}</p>
                         </div>
+                        {
+                            message_error != '' ? (
+                                <div className="hidden md:block text-red-400 text-center tracking-wide mb-3 text-sm">{message_error}</div>
+                            ) : ''
+                        }
+                        {
+                            message_success != '' ? (
+                                <div className="hidden md:block text-green-600 text-center tracking-wide mb-3 text-sm">{message_success}</div>
+                            ) : ''
+                        }
                         {
                             product.length != 0 ? (
                                 <button onClick={insert} className={(product.length > 0 ? "hover:bg-blue-600" : "") + " hidden md:block h-12 border rounded-md font-bold"}>Checkout</button>
